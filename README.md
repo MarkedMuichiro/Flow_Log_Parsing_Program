@@ -44,9 +44,56 @@ This program is designed to handle:
 
 ### Steps to Run
 
-1. **Clone or Download the Repository**:
+ **Clone or Download the Repository**:
    - Clone the repository from GitHub or download the source files.
    
    ```bash
    git clone https://github.com/JoseSanchez7/flow-log-parser.git
    cd flow-log-parser
+
+## Output:
+
+The program generates an output file named `output.txt`, which contains the results of the flow log processing. This file is located in the same directory as the script.
+
+---
+
+## Testing and Analysis
+
+### Testing Performed:
+
+- **Valid Flow Logs**:  
+   The program was tested with flow logs containing various destination ports and protocols (TCP, UDP, ICMP) to ensure proper matching and counting of tags.
+
+- **Malformed Flow Logs**:  
+   Lines with fewer than 8 fields were tested to ensure they are properly skipped, and the count of malformed lines is correctly reported in the output.
+
+- **Multiple Tags per Port/Protocol**:  
+   The lookup table was tested with multiple tags assigned to the same port and protocol combination. The program correctly counted each tag when the matching port/protocol combination appeared in the flow logs.
+
+- **Case Insensitive Matching**:  
+   Flow logs and lookup table entries with varying cases (e.g., `TCP` vs `tcp`) were tested to ensure the program handled case insensitivity correctly, matching regardless of the case used.
+
+- **Large Files**:  
+   The program was tested with a flow log file of 10 MB in size and a lookup table containing 10,000 entries to confirm it could process large amounts of data efficiently without exceeding memory limits.
+
+### Analysis:
+
+- **Efficiency**:  
+   The program processes the flow logs line by line, making it scalable for large files. Memory usage is kept minimal since only the lookup table is stored in memory as a dictionary, allowing efficient lookups (average O(1) complexity).
+
+- **Error Handling**:  
+   The program gracefully handles malformed flow log lines, skipping them and providing a count of how many lines were skipped. This ensures robustness when working with potentially messy log files.
+
+- **Extensibility**:  
+   The program is easily extendable. If additional protocols need to be supported or if more complex tag mappings are required, the lookup structure and logic can be adjusted without major changes to the overall design.
+
+---
+
+## Notes on Edge Cases
+
+- **Unknown Protocols**:  
+   Any protocol number not supported by the program (i.e., not `tcp`, `udp`, or `icmp`) is categorized as `"unknown"`. These logs will not be tagged unless a specific lookup table entry exists for `"unknown"` protocols.
+
+- **Custom Flow Log Formats**:  
+   This program assumes that the flow logs follow AWS’s default format. Custom formats are not supported and may result in skipped lines.
+
